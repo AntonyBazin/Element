@@ -10,25 +10,29 @@
 namespace cpplab3v13{
 
     enum conditions{LOW, HIGH, X};
+    enum types{IN, OUT, IM};
 
     struct connection{
-        bool type;
+        types type;
         int sockets[3];
         conditions condition;
+        connection(){
+            type = IM;
+            condition = X;
+            for(int i = 0; i < 3; ++i){
+                sockets[i] = -1;
+            }
+        }
     };
 
-    struct connections{
-        connection c;
-        connections *next;
-    };
 
     class element{
     private:
-        static const int connections_amount = 10;
+        static const int connections_max = 10;
         int conns;
-        connection cs[connections_amount];
+        connection cs[connections_max];
     public:
-        explicit element(int c) :conns(c){};
+        explicit element();
         element(int in, int out);
         element(connection* arr, int sum);
 
@@ -38,7 +42,7 @@ namespace cpplab3v13{
         element& disconnect_conn(int which, int amount);
         element& add_conn(connection newcomer);
 
-        connections* get_conns() const;
+
         connection get_conn(int number) const;
 
     };
