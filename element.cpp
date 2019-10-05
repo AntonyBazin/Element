@@ -46,4 +46,34 @@ namespace cpplab3v13{
         }
         return *this;
     }
+
+    element &element::total_reorg() {
+        int c, rc;
+        for(int i = 0; i < this->conns; ++i){
+            std::cout << "please, enter the condition(1 for high signal level, "
+            << "0 for low signal level -1 for X) of connection #" << (i + 1)
+            << " of type " << (cs[i].type == IN ? "INPUT" : "OUTPUT") << std::endl;
+            do{
+                std::cin >> c;
+                rc = std::cin.good();
+                if(rc == 1) break;
+                if(!rc) return *this;
+                std::cout << "incorrect input, please, try again:";
+            }while(rc < 0);
+
+            switch(c){
+                case 1:
+                    cs[i].condition = HIGH;
+                    break;
+                case 0:
+                    cs[i].condition = LOW;
+                    break;
+                default:
+                   cs[i].condition = X;
+                   break;
+            }
+
+        }
+        return *this;
+    }
 }

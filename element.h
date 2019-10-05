@@ -25,6 +25,14 @@ namespace cpplab3v13{
         }
     };
 
+    template <class T>
+    int get_number(T &a){
+        std::cin >> a;
+        if (!std::cin.good()) // ошибка ввода/конец файла
+            if(std::cin.eof()) return 0;
+            return -1;
+        return 1;
+    }
 
     class element{
     private:
@@ -36,7 +44,7 @@ namespace cpplab3v13{
         element(int in, int out);
         element(connection* arr, int sum);
 
-        element& reorg();
+        element& total_reorg();
         element& set_conn(int number);
         element& connect_conn(int which, int amount);
         element& disconnect_conn(int which, int amount);
