@@ -51,7 +51,7 @@ namespace cpplab3v13{
         element& add_conn(connection newcomer);
 
 
-        connection get_conn(int number) const;
+        void get_conn(int number) const;
 
     };
 }

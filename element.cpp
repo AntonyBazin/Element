@@ -76,4 +76,40 @@ namespace cpplab3v13{
         }
         return *this;
     }
+
+    void element::get_conn(int number) const {
+        std::cout << "info about all existing connections:" << std::endl;
+        for(int i = 0; i < this->conns; ++i){
+            std::cout << "connection #" << (i+1) << ":" << std::endl
+            << "Condition: ";
+            switch(cs[i].condition){
+                case 1:
+                    std::cout << "HIGH; ";
+                    break;
+                case 0:
+                    std::cout << "LOW; ";
+                    break;
+                default:
+                    std::cout << "NOT DEFINED; ";
+                    break;
+            }
+
+            std::cout << "type: ";
+            switch(cs[i].type){
+                case 0:
+                    std::cout << "INPUT; ";
+                    break;
+                case 1:
+                    std::cout << "OUTPUT; ";
+                    break;
+                default:        //TODO: NB! delete this after debugging, useless
+                    std::cout << "NOT DEFINED; ";
+                    break;
+            }
+
+            //std::cout <<
+        }
+    }
+
+
 }
