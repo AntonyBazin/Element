@@ -39,7 +39,6 @@ namespace cpplab3v13{
         int conns;
         connection cs[connections_max];
     public:
-        //element();
         explicit element(int in = 1, int out = 1);
         element(connection* arr, int sum);
 
@@ -48,7 +47,7 @@ namespace cpplab3v13{
 
         element& total_reorg();    // modificators
         element& set_conn_state(int number, int new_state);
-        element& connect_conn(int which, int amount);
+        element& connect_conn(int which, int whereto);
         element& disconnect_conn(int which, int amount);
         element& add_conn(connection newcomer);
 

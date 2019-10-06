@@ -7,20 +7,9 @@
 
 namespace cpplab3v13{
 
-    /*element::element() {
-        this->conns = 0;
-        connection in, out;
-        in.type = IN;
-        out.type = OUT;
-
-        add_conn(in);
-        add_conn(out);
-
-    }*/
-
     element::element(int in, int out) {
         this->conns = 0;
-        for(int i = 0; i < (in + out); ++i){
+        for(int i = 0; i < (in + out) && i < connections_max; ++i){
             connection con;
             con.type = i < in ? IN : OUT;
             add_conn(con);
@@ -72,7 +61,6 @@ namespace cpplab3v13{
                     set_conn_state(i, 2);
                    break;
             }
-
         }
         return *this;
     }
@@ -153,6 +141,34 @@ namespace cpplab3v13{
         if(cs[number].type == IM)
             throw std::runtime_error("there is no such connection");
         return cs[number].condition;
+    }
+
+    element &element::connect_conn(int which, int whereto) {
+        if(which < 0 || which >= connections_max)  //TODO: refactor this
+            throw std::runtime_error("invalid connection index");
+        if(cs[which].type == IM)
+            throw std::runtime_error("there is no such connection");
+        if(whereto < 0 || whereto >= connections_max)
+            throw std::runtime_error("invalid connection index");
+        if(cs[whereto].type == IM)
+            throw std::runtime_error("there is no such connection");
+
+        if(cs[which].type == IN){
+            if(cs[which].sockets[0] != -1)
+                throw std::runtime_error("this connection is busy! disconnect it first!");
+            else
+                cs[which].sockets[0] = whereto;
+        } else{
+            for(int i = 0; i < 3; ++i){
+                if(cs[which].sockets[i] == -1){
+                    cs[which].sockets[i] = whereto;
+                    break;
+                }
+                if(i == 2)
+                    throw std::runtime_error("this connection is busy! disconnect it first!");
+            }
+        }
+        return *this;
     }
 
 
