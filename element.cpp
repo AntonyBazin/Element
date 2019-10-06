@@ -77,7 +77,7 @@ namespace cpplab3v13{
         return *this;
     }
 
-    void element::get_conn(int number) const {
+    void element::get_conns() const { //TODO: large method, split - ?
         std::cout << "info about all existing connections:" << std::endl;
         for(int i = 0; i < this->conns; ++i){
             std::cout << "connection #" << (i+1) << ":" << std::endl
@@ -107,7 +107,13 @@ namespace cpplab3v13{
                     break;
             }
 
-            //std::cout <<
+            std::cout << "connected to elements:";
+            for(int j = 0; j < 3; ++j){
+                if(cs[i].sockets[j] != -1){
+                    std::cout << " " << (cs[i].sockets[j] + 1);
+                }
+            }
+
         }
     }
 

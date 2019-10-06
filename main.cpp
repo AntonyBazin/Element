@@ -8,5 +8,7 @@ int main() {
      auto *ptr = new cpplab3v13::connection[5];
      cpplab3v13::element elem3(ptr, 5);
      delete [] ptr;
-    return 0;
+     elem3.total_reorg();
+     elem3.get_conns();
+     return 0;
 }

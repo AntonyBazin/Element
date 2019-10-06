@@ -19,8 +19,8 @@ namespace cpplab3v13{
         connection(){
             type = IM;
             condition = X;
-            for(int i = 0; i < 3; ++i){
-                sockets[i] = -1;
+            for(int & socket : sockets){  //TODO: ask
+                socket = -1;
             }
         }
     };
@@ -44,14 +44,13 @@ namespace cpplab3v13{
         element(int in, int out);
         element(connection* arr, int sum);
 
-        element& total_reorg();
+        void get_conns() const;    //selectors
+
+        element& total_reorg();    // modificators
         element& set_conn(int number);
         element& connect_conn(int which, int amount);
         element& disconnect_conn(int which, int amount);
         element& add_conn(connection newcomer);
-
-
-        void get_conn(int number) const;
 
     };
 }
