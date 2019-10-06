@@ -39,8 +39,8 @@ namespace cpplab3v13{
         int conns;
         connection cs[connections_max];
     public:
-        explicit element();
-        element(int in, int out);
+        //element();
+        explicit element(int in = 1, int out = 1);
         element(connection* arr, int sum);
 
         void get_conns() const;    //selectors

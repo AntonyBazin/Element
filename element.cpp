@@ -7,7 +7,7 @@
 
 namespace cpplab3v13{
 
-    element::element() {
+    /*element::element() {
         this->conns = 0;
         connection in, out;
         in.type = IN;
@@ -16,7 +16,7 @@ namespace cpplab3v13{
         add_conn(in);
         add_conn(out);
 
-    }
+    }*/
 
     element::element(int in, int out) {
         this->conns = 0;
@@ -52,8 +52,8 @@ namespace cpplab3v13{
         for(int i = 0; i < this->conns; ++i){
             std::cout << "please, enter the condition(1 for high signal level, "
             << "0 for low signal level, anything else for X)"
-            << std::endl << " of connection #" << (i + 1)
-            << " of type " << (cs[i].type == IN ? "INPUT" : "OUTPUT") << std::endl;
+            << std::endl << "Of connection #" << (i + 1)
+            << " of type " << (cs[i].type == IN ? "INPUT:" : "OUTPUT:") << std::endl;
             do{
                 rc = get_number(c);
                 if(rc == 1) break;
@@ -62,14 +62,14 @@ namespace cpplab3v13{
             }while(rc < 0);
 
             switch(c){
-                case 1:
-                    cs[i].condition = HIGH;
-                    break;
                 case 0:
-                    cs[i].condition = LOW;
+                    set_conn_state(i, 0);
+                    break;
+                case 1:
+                    set_conn_state(i, 1);
                     break;
                 default:
-                   cs[i].condition = X;
+                    set_conn_state(i, 2);
                    break;
             }
 
@@ -154,5 +154,6 @@ namespace cpplab3v13{
             throw std::runtime_error("there is no such connection");
         return cs[number].condition;
     }
+
 
 }
