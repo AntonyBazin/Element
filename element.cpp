@@ -180,7 +180,7 @@ namespace cpplab3v13{
             throw std::runtime_error("invalid connection index");
         if(cs[disconn_id].type == IM)
             throw std::runtime_error("there is no such connection");
-        
+
         for(int i = 0; i < 3; ++i){
             if(cs[which].sockets[i] == disconn_id)
                 cs[which].sockets[i] = -1;
