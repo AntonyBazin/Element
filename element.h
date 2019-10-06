@@ -48,7 +48,7 @@ namespace cpplab3v13{
         element& total_reorg();    // modificators
         element& set_conn_state(int number, int new_state);
         element& connect_conn(int which, int whereto);
-        element& disconnect_conn(int which, int amount);
+        element& disconnect_conn(int which, int disconn_id);
         element& add_conn(connection newcomer);
 
     };

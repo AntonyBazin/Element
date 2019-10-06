@@ -171,5 +171,23 @@ namespace cpplab3v13{
         return *this;
     }
 
+    element &element::disconnect_conn(int which, int disconn_id) {
+        if(which < 0 || which >= connections_max)  //TODO: refactor this
+            throw std::runtime_error("invalid connection index");
+        if(cs[which].type == IM)
+            throw std::runtime_error("there is no such connection");
+        if(disconn_id < 0 || disconn_id >= connections_max)
+            throw std::runtime_error("invalid connection index");
+        if(cs[disconn_id].type == IM)
+            throw std::runtime_error("there is no such connection");
+        
+        for(int i = 0; i < 3; ++i){
+            if(cs[which].sockets[i] == disconn_id)
+                cs[which].sockets[i] = -1;
+        }
+
+        return *this;
+    }
+
 
 }
