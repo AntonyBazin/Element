@@ -28,9 +28,8 @@ namespace cpplab3v13{
     template <class T>
     int get_number(T &a){
         std::cin >> a;
-        if (!std::cin.good()) // ошибка ввода/конец файла
-            if(std::cin.eof()) return 0;
-            return -1;
+        if(std::cin.eof()) return 0;    // конец файла
+        if (!std::cin.good()) return -1; // ошибка ввода
         return 1;
     }
 
@@ -45,9 +44,10 @@ namespace cpplab3v13{
         element(connection* arr, int sum);
 
         void get_conns() const;    //selectors
+        int get_conn_state(int number) const;
 
         element& total_reorg();    // modificators
-        element& set_conn(int number);
+        element& set_conn_state(int number, int new_state);
         element& connect_conn(int which, int amount);
         element& disconnect_conn(int which, int amount);
         element& add_conn(connection newcomer);

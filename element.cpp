@@ -51,13 +51,13 @@ namespace cpplab3v13{
         int c, rc;
         for(int i = 0; i < this->conns; ++i){
             std::cout << "please, enter the condition(1 for high signal level, "
-            << "0 for low signal level -1 for X) of connection #" << (i + 1)
+            << "0 for low signal level, anything else for X)"
+            << std::endl << " of connection #" << (i + 1)
             << " of type " << (cs[i].type == IN ? "INPUT" : "OUTPUT") << std::endl;
             do{
-                std::cin >> c;
-                rc = std::cin.good();
+                rc = get_number(c);
                 if(rc == 1) break;
-                if(!rc) return *this;
+                if(!rc) return *this;  // eof TODO any eof measures?
                 std::cout << "incorrect input, please, try again:";
             }while(rc < 0);
 
@@ -79,15 +79,16 @@ namespace cpplab3v13{
 
     void element::get_conns() const { //TODO: large method, split - ?
         std::cout << "info about all existing connections:" << std::endl;
+
         for(int i = 0; i < this->conns; ++i){
             std::cout << "connection #" << (i+1) << ":" << std::endl
             << "Condition: ";
             switch(cs[i].condition){
-                case 1:
-                    std::cout << "HIGH; ";
-                    break;
                 case 0:
                     std::cout << "LOW; ";
+                    break;
+                case 1:
+                    std::cout << "HIGH; ";
                     break;
                 default:
                     std::cout << "NOT DEFINED; ";
@@ -113,9 +114,45 @@ namespace cpplab3v13{
                     std::cout << " " << (cs[i].sockets[j] + 1);
                 }
             }
-
+            std::cout << std::endl << std::endl;
         }
     }
 
+    element &element::set_conn_state(int number, int new_state) {
+        if(number < 0 || number >= connections_max)
+            throw std::runtime_error("invalid connection index");
+        if(cs[number].type == IM)
+            throw std::runtime_error("there is no such connection");
+        bool lonely = true;
+        for(int i = 0; i < 3; ++i){
+            if(cs[number].sockets[i] != -1){
+                lonely = false;
+                break;
+            }
+        }
+        if(lonely)
+            throw std::runtime_error("only X state permitted for lonely connections");
+
+        switch(new_state){
+            case 0:
+                cs[number].condition = LOW;
+                break;
+            case 1:
+                cs[number].condition = HIGH;
+                break;
+            default:
+                cs[number].condition = X;
+                break;
+        }
+        return *this;
+    }
+
+    int element::get_conn_state(int number) const {
+        if(number < 0 || number >= connections_max)
+            throw std::runtime_error("invalid connection index");
+        if(cs[number].type == IM)
+            throw std::runtime_error("there is no such connection");
+        return cs[number].condition;
+    }
 
 }
