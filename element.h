@@ -6,8 +6,19 @@
 #define CPPLAB3_ELEMENT_H
 
 #include <iostream>
+#include <csignal>
 
 namespace cpplab3v13{
+
+    const char *messages[] = {"0. Quit                ",
+                              "1. Add connection",
+                              "2. Delete connection",
+                              "3. Print info",
+                              "4. Disconnect something",
+                              "5. Connect something",
+                              "6. total state change"};
+
+    const int NMsgs = sizeof(messages)/sizeof(messages[0]);
 
     enum conditions{LOW, HIGH, X};
     enum types{IN, OUT, IM};
@@ -29,7 +40,11 @@ namespace cpplab3v13{
     int get_number(T &a){
         std::cin >> a;
         if(std::cin.eof()) return 0;    // конец файла
-        if (!std::cin.good()) return -1; // ошибка ввода
+        if (!std::cin.good()){
+            std::cin.clear();
+            std::cin.ignore(100, '\n');
+            return -1; // ошибка ввода
+        }
         return 1;
     }
 
@@ -50,6 +65,7 @@ namespace cpplab3v13{
         element& connect_conn(int which, int whereto);
         element& disconnect_conn(int which, int disconn_id);
         element& add_conn(connection newcomer);
+        element& delete_conn(int which);
 
     };
 }

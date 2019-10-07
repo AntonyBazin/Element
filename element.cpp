@@ -39,10 +39,22 @@ namespace cpplab3v13{
     element &element::total_reorg() {
         int c, rc;
         for(int i = 0; i < this->conns; ++i){
+
+            bool lonely = true;
+            for(int j = 0; j < 3; ++j){
+                if(cs[i].sockets[j] != -1){
+                    lonely = false;
+                    break;
+                }
+            }
+            if(lonely) continue;
+
             std::cout << "please, enter the condition(1 for high signal level, "
             << "0 for low signal level, anything else for X)"
             << std::endl << "Of connection #" << (i + 1)
-            << " of type " << (cs[i].type == IN ? "INPUT:" : "OUTPUT:") << std::endl;
+            << " of type " << (cs[i].type == IN ? "INPUT:" : "OUTPUT:")
+            << std::endl;
+
             do{
                 rc = get_number(c);
                 if(rc == 1) break;
@@ -185,9 +197,28 @@ namespace cpplab3v13{
             if(cs[which].sockets[i] == disconn_id)
                 cs[which].sockets[i] = -1;
         }
+        for(int i = 0; i < 3; ++i){
+            if(cs[disconn_id].sockets[i] == which){
+                cs[disconn_id].sockets[i] = -1;
+            }
+        }
 
         return *this;
     }
 
+    element &element::delete_conn(int which) {
+        if(which < 0 || which >= connections_max)
+            throw std::runtime_error("invalid connection index");
+        if(cs[which].type == IM)
+            throw std::runtime_error("there is no such connection");
+        for(int i = 0; i < conns; ++i){
+            for(int j = 0; j < 3; ++j){
+                if(cs[i].sockets[j] == which)
+                    cs[i].sockets[j] = -1;
+            }
+        }
+        cs[which] = cs[conns--];
+        return *this;
+    }
 
 }
