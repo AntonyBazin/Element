@@ -12,7 +12,9 @@ namespace cpplab3v13{
                               "3. Print info",
                               "4. Disconnect something",
                               "5. Connect something",
-                              "6. total state change"};
+                              "6. total state change",
+                              "7. get connection info",
+                              "8. set connection state"};
 
     const int NMsgs = sizeof(messages)/sizeof(messages[0]);
 
@@ -191,22 +193,19 @@ namespace cpplab3v13{
             if(i == 2)
                 throw std::runtime_error("no place to plug in in target");
         }
-        
+
         if(cs[which].sockets[0] != -1)
             throw std::runtime_error("this connection is busy! disconnect it first!");
         else
             cs[which].sockets[0] = whereto;
 
-        {
-            for(int i = 0; i < 3; ++i){
-                if(cs[which].sockets[i] == -1){
-                    cs[which].sockets[i] = whereto;
-                    break;
-                }
-                if(i == 2)
-                    throw std::runtime_error("this connection is busy! disconnect it first!");
+        for(int i = 0; i < 3; ++i){
+            if(cs[whereto].sockets[i] == -1){
+                cs[whereto].sockets[i] = which;
+                break;
             }
         }
+
         return *this;
     }
 
@@ -229,7 +228,6 @@ namespace cpplab3v13{
                 cs[disconn_id].sockets[i] = -1;
             }
         }
-
         return *this;
     }
 
@@ -244,7 +242,9 @@ namespace cpplab3v13{
                     cs[i].sockets[j] = -1;
             }
         }
-        cs[which] = cs[conns--];
+        cs[which] = cs[--conns];
+        cs[conns].type = IM;
+        cs[conns].condition = X;
         return *this;
     }
 
@@ -288,8 +288,8 @@ namespace cpplab3v13{
                 case 0:
                     return 0;
                 case 1:
-                    std::cout << "Input connection\'s type(0 for in, else for out):"
-                              << std::endl;
+                    std::cout << "Input connection\'s type(1 for in, else for out):"
+                    << std::endl;
 
                     do{
                         rc = get_number(b);
@@ -382,7 +382,34 @@ namespace cpplab3v13{
                         if(!rc) return 0;
                         std::cout << "Incorrect input, please, try again:";
                     }while(rc < 0);
-                    elem.get_conn_state(b - 1);
+
+                    try{
+                        elem.get_conn_state(b - 1);
+                    } catch(std::runtime_error &rt){
+                        std::cout << rt.what() << std::endl;
+                    }
+                    break;
+                case 8:
+                    std::cout << "Input connection id to set state:" << std::endl;
+                    do{
+                        rc = get_number(b);
+                        if(rc == 1) break;
+                        if(!rc) return 0;
+                        std::cout << "Incorrect input, please, try again:";
+                    }while(rc < 0);
+                    std::cout << "Input new state(0 - low, 1 - high, else - X)" << std::endl;
+                    do{
+                        rc = get_number(a);
+                        if(rc == 1) break;
+                        if(!rc) return 0;
+                        std::cout << "Incorrect input, please, try again:";
+                    }while(rc < 0);
+
+                    try{
+                        elem.set_conn_state(b - 1, a - 1);
+                    } catch(std::runtime_error &rt){
+                        std::cout << rt.what() << std::endl;
+                    }
                     break;
                 default:
                     std::cout << "unexpected command index!" << std::endl;
