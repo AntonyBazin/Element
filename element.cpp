@@ -31,6 +31,9 @@ namespace cpplab3v13{
         this->conns = 0;
         for(int i = 0; i < sum; ++i){
             if(arr[i].type == IM) arr[i].type = IN;
+            for(int j = 0; j < 3; ++j){
+                arr[i].sockets[j] = -1;
+            }
             add_conn(arr[i]);
         }
     }
@@ -264,8 +267,8 @@ namespace cpplab3v13{
         std::_Exit(EXIT_SUCCESS);
     }
 
-    int run(connection *ptr) {
-        element elem(ptr, 5);
+    int run(connection *ptr, int n) {
+        element elem(ptr, n);
 
         while(true){
             int a, b, rc;

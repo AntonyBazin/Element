@@ -53,7 +53,7 @@ namespace cpplab3v13{
         connection get_conn(int number) const;
 
 
-        element& total_reorg();    //modificators
+        element& total_reorg(); //for overloading   //modificators
         element& set_conn_state(int number, int new_state);
         element& connect_conn(int which, int whereto);
         element& disconnect_conn(int which, int disconn_id);
@@ -63,7 +63,7 @@ namespace cpplab3v13{
 
     };
 
-    int run(connection *ptr);
+    int run(connection *ptr, int n);
     void signal_handler(int);
 }
 
