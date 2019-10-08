@@ -27,8 +27,10 @@ namespace cpplab3v13{
 
     element::element(connection *arr, int sum) {
         this->conns = 0;
-        for(int i = 0; i < sum; ++i)
+        for(int i = 0; i < sum; ++i){
+            if(arr[i].type == IM) arr[i].type = IN;
             add_conn(arr[i]);
+        }
     }
 
 
@@ -113,7 +115,7 @@ namespace cpplab3v13{
                     std::cout << "OUTPUT; ";
                     break;
                 default:        //TODO: NB! delete this after debugging, useless
-                    std::cout << "NOT DEFINED; ";
+                    std::cout << "IMAGINARY; ";
                     break;
             }
 
@@ -173,13 +175,29 @@ namespace cpplab3v13{
             throw std::runtime_error("invalid connection index");
         if(cs[whereto].type == IM)
             throw std::runtime_error("there is no such connection");
+        if(cs[whereto].type == cs[which].type)
+            throw std::runtime_error("you can\'t connect same types");
 
-        if(cs[which].type == IN){
-            if(cs[which].sockets[0] != -1)
-                throw std::runtime_error("this connection is busy! disconnect it first!");
-            else
-                cs[which].sockets[0] = whereto;
-        } else{
+        if(cs[which].type == OUT){
+            int h = which;
+            which = whereto;
+            whereto = h;
+        }
+
+        for(int i = 0; i < 3; ++i){
+            if(cs[whereto].sockets[i] == -1){
+                break;
+            }
+            if(i == 2)
+                throw std::runtime_error("no place to plug in in target");
+        }
+        
+        if(cs[which].sockets[0] != -1)
+            throw std::runtime_error("this connection is busy! disconnect it first!");
+        else
+            cs[which].sockets[0] = whereto;
+
+        {
             for(int i = 0; i < 3; ++i){
                 if(cs[which].sockets[i] == -1){
                     cs[which].sockets[i] = whereto;
@@ -254,7 +272,7 @@ namespace cpplab3v13{
             }
 
             for(int i = 0; i < NMsgs; ++i) {
-                std::cout << (messages[i]);
+                std::cout << (messages[i]) << std::endl;
             }
 
             std::cout << "Please, input action index:";
@@ -288,7 +306,7 @@ namespace cpplab3v13{
                     }
                     break;
                 case 2:
-                    std::cout << "Input connection index to delete:" << std::endl;
+                    std::cout << "Input connection id to delete:" << std::endl;
 
                     do{
                         rc = get_number(b);
@@ -298,7 +316,7 @@ namespace cpplab3v13{
                     }while(rc < 0);
 
                     try{
-                        elem.delete_conn(b);
+                        elem.delete_conn(b - 1);
                     } catch(std::runtime_error &rt){
                         std::cout << rt.what() << std::endl;
                     }
@@ -308,7 +326,7 @@ namespace cpplab3v13{
                     elem.get_conns();
                     break;
                 case 4:
-                    std::cout << "Input connection index to disconnect:" << std::endl;
+                    std::cout << "Input connection id to disconnect:" << std::endl;
                     do{
                         rc = get_number(a);
                         if(rc == 1) break;
@@ -316,7 +334,7 @@ namespace cpplab3v13{
                         std::cout << "Incorrect input, please, try again:";
                     }while(rc < 0);
 
-                    std::cout << "Input target connection index:" << std::endl;
+                    std::cout << "Input target connection id:" << std::endl;
                     do{
                         rc = get_number(b);
                         if(rc == 1) break;
@@ -325,13 +343,13 @@ namespace cpplab3v13{
                     }while(rc < 0);
 
                     try{
-                        elem.disconnect_conn(a, b);
+                        elem.disconnect_conn(a - 1, b - 1);
                     } catch(std::runtime_error &rt){
                         std::cout << rt.what() << std::endl;
                     }
                     break;
                 case 5:
-                    std::cout << "Input connection index to connect:" << std::endl;
+                    std::cout << "Input connection id to connect:" << std::endl;
                     do{
                         rc = get_number(a);
                         if(rc == 1) break;
@@ -339,7 +357,7 @@ namespace cpplab3v13{
                         std::cout << "Incorrect input, please, try again:";
                     }while(rc < 0);
 
-                    std::cout << "Input target connection index:" << std::endl;
+                    std::cout << "Input target connection id:" << std::endl;
                     do{
                         rc = get_number(b);
                         if(rc == 1) break;
@@ -348,7 +366,7 @@ namespace cpplab3v13{
                     }while(rc < 0);
 
                     try{
-                        elem.connect_conn(a, b);
+                        elem.connect_conn(a - 1, b - 1);
                     } catch(std::runtime_error &rt){
                         std::cout << rt.what() << std::endl;
                     }
@@ -357,14 +375,14 @@ namespace cpplab3v13{
                     elem.total_reorg();
                     break;
                 case 7:
-                    std::cout << "Input connection index to get info about:" << std::endl;
+                    std::cout << "Input connection id to get info about:" << std::endl;
                     do{
                         rc = get_number(b);
                         if(rc == 1) break;
                         if(!rc) return 0;
                         std::cout << "Incorrect input, please, try again:";
                     }while(rc < 0);
-                    elem.get_conn_state(b);
+                    elem.get_conn_state(b - 1);
                     break;
                 default:
                     std::cout << "unexpected command index!" << std::endl;
