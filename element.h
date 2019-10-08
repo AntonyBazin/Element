@@ -58,6 +58,7 @@ namespace cpplab3v13{
         element& add_conn(connection newcomer);
         element& delete_conn(int which);
 
+
     };
 
     int run(connection *ptr);

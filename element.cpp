@@ -12,9 +12,9 @@ namespace cpplab3v13{
                               "3. Print info",
                               "4. Disconnect something",
                               "5. Connect something",
-                              "6. total state change",
-                              "7. get connection info",
-                              "8. set connection state"};
+                              "6. Total state change",
+                              "7. Get connection info",
+                              "8. Set connection state"};
 
     const int NMsgs = sizeof(messages)/sizeof(messages[0]);
 
@@ -71,7 +71,7 @@ namespace cpplab3v13{
             do{
                 rc = get_number(c);
                 if(rc == 1) break;
-                if(!rc) return *this;  // eof TODO any eof measures?
+                if(!rc) return *this;  // eof
                 std::cout << "incorrect input, please, try again:";
             }while(rc < 0);
 
@@ -90,7 +90,7 @@ namespace cpplab3v13{
         return *this;
     }
 
-    void element::get_conns() const { //TODO: large method, split - ?
+    void element::get_conns() const { //TODO: large method, split/overload - ?
         std::cout << "info about all existing connections:" << std::endl;
 
         for(int i = 0; i < this->conns; ++i){
@@ -116,7 +116,7 @@ namespace cpplab3v13{
                 case 1:
                     std::cout << "OUTPUT; ";
                     break;
-                default:        //TODO: NB! delete this after debugging, useless
+                default:
                     std::cout << "IMAGINARY; ";
                     break;
             }
@@ -415,7 +415,6 @@ namespace cpplab3v13{
                     std::cout << "unexpected command index!" << std::endl;
                     break;
             }
-
         }
     }
 
