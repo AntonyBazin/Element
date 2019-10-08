@@ -4,21 +4,12 @@
 
 #ifndef CPPLAB3_ELEMENT_H
 #define CPPLAB3_ELEMENT_H
+#pragma once
 
 #include <iostream>
 #include <csignal>
 
 namespace cpplab3v13{
-
-    const char *messages[] = {"0. Quit                ",
-                              "1. Add connection",
-                              "2. Delete connection",
-                              "3. Print info",
-                              "4. Disconnect something",
-                              "5. Connect something",
-                              "6. total state change"};
-
-    const int NMsgs = sizeof(messages)/sizeof(messages[0]);
 
     enum conditions{LOW, HIGH, X};
     enum types{IN, OUT, IM};
@@ -68,6 +59,9 @@ namespace cpplab3v13{
         element& delete_conn(int which);
 
     };
+
+    int run(connection *ptr);
+    void signal_handler(int);
 }
 
 #endif //CPPLAB3_ELEMENT_H
