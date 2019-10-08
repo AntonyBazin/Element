@@ -169,7 +169,7 @@ namespace cpplab3v13{
     }
 
     element &element::connect_conn(int which, int whereto) {
-        if(which < 0 || which >= connections_max)  //TODO: refactor this
+        if(which < 0 || which >= connections_max)  //TODO: refactor this?
             throw std::runtime_error("invalid connection index");
         if(cs[which].type == IM)
             throw std::runtime_error("there is no such connection");
@@ -210,7 +210,7 @@ namespace cpplab3v13{
     }
 
     element &element::disconnect_conn(int which, int disconn_id) {
-        if(which < 0 || which >= connections_max)  //TODO: refactor this
+        if(which < 0 || which >= connections_max)
             throw std::runtime_error("invalid connection index");
         if(cs[which].type == IM)
             throw std::runtime_error("there is no such connection");
@@ -248,6 +248,11 @@ namespace cpplab3v13{
         return *this;
     }
 
+    connection element::get_conn(int number) const {
+        if(number < 0 || number >= connections_max)
+            throw std::runtime_error("invalid connection index");
+        return cs[number];
+    }
 
 
     void signal_handler(int signal){

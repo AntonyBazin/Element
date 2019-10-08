@@ -50,8 +50,10 @@ namespace cpplab3v13{
 
         void get_conns() const;    //selectors
         int get_conn_state(int number) const;
+        connection get_conn(int number) const;
 
-        element& total_reorg();    // modificators
+
+        element& total_reorg();    //modificators
         element& set_conn_state(int number, int new_state);
         element& connect_conn(int which, int whereto);
         element& disconnect_conn(int which, int disconn_id);
