@@ -72,7 +72,7 @@ namespace cpplab3v13{
             << std::endl;
 
             do{
-                rc = get_number(c);
+                rc = input_number(c, std::cin);
                 if(rc == 1) break;
                 if(!rc) return *this;  // eof
                 std::cout << "incorrect input, please, try again:";
@@ -277,164 +277,173 @@ namespace cpplab3v13{
         std::_Exit(EXIT_SUCCESS);
     }
 
-    int run(connection *ptr, int n) {
-        element elem(ptr, n);
 
-        while(true){
-            int a, b, rc;
-            connection con;
-            auto previous_handler = signal(SIGINT, signal_handler);
-            if (previous_handler == SIG_ERR) {
-                std::cerr << "Signal set failed!\n";
-                return EXIT_FAILURE;
+    int dialog(){
+        char *report = (char*)"";
+        int rc, i, n;
+        do{
+            std::cout << report;
+            report = (char*)"You are wrong. Please, try again.";
+            for(i = 0; i < NMsgs; ++i) {  //print list of alternatives
+                std::cout << messages[i];
             }
+            printf("Make your choice: ~ ");
+            n = input_number(rc, std::cin);  //enter number of alternative
+            if(!n) rc = 0;  //EOF == end of the program
+        } while(rc < 0 || rc >= NMsgs);
+        return rc;
+    }
 
-            for(int i = 0; i < NMsgs; ++i) {
-                std::cout << (messages[i]) << std::endl;
-            }
+    int d_add_conn(element& elem){
+        int rc, b;
+        connection con;
 
-            std::cout << "Please, input action index:";
+        std::cout << "Input connection\'s type(1 for in, else for out):"
+                  << std::endl;
 
-            do{
-                rc = get_number(a);
-                if(rc == 1) break;
-                if(!rc) return 0;
-                std::cout << "incorrect input, please, try again:";
-            }while(rc < 0);
+        do{
+            rc = input_number(b, std::cin);
+            if(rc == 1) break;
+            if(!rc) return 0;
+            std::cout << "Incorrect input, please, try again:";
+        }while(rc < 0);
 
-            switch(a) {
-                case 0:
-                    return 0;
-                case 1:
-                    std::cout << "Input connection\'s type(1 for in, else for out):"
-                    << std::endl;
-
-                    do{
-                        rc = get_number(b);
-                        if(rc == 1) break;
-                        if(!rc) return 0;
-                        std::cout << "Incorrect input, please, try again:";
-                    }while(rc < 0);
-
-                    con.type = (b == 1 ? IN : OUT);
-                    try {
-                        elem.add_conn(con);
-                    } catch (std::runtime_error &rt) {
-                        std::cout << rt.what() << std::endl;
-                    }
-                    break;
-                case 2:
-                    std::cout << "Input connection id to delete:" << std::endl;
-
-                    do{
-                        rc = get_number(b);
-                        if(rc == 1) break;
-                        if(!rc) return 0;
-                        std::cout << "Incorrect input, please, try again:";
-                    }while(rc < 0);
-
-                    try{
-                        elem.delete_conn(b - 1);
-                    } catch(std::runtime_error &rt){
-                        std::cout << rt.what() << std::endl;
-                    }
-
-                    break;
-                case 3:
-                    elem.print_conns();
-                    break;
-                case 4:
-                    std::cout << "Input connection id to disconnect:" << std::endl;
-                    do{
-                        rc = get_number(a);
-                        if(rc == 1) break;
-                        if(!rc) return 0;
-                        std::cout << "Incorrect input, please, try again:";
-                    }while(rc < 0);
-
-                    std::cout << "Input target connection id:" << std::endl;
-                    do{
-                        rc = get_number(b);
-                        if(rc == 1) break;
-                        if(!rc) return 0;
-                        std::cout << "Incorrect input, please, try again:";
-                    }while(rc < 0);
-
-                    try{
-                        elem.disconnect_conn(a - 1, b - 1);
-                    } catch(std::runtime_error &rt){
-                        std::cout << rt.what() << std::endl;
-                    }
-                    break;
-                case 5:
-                    std::cout << "Input connection id to connect:" << std::endl;
-                    do{
-                        rc = get_number(a);
-                        if(rc == 1) break;
-                        if(!rc) return 0;
-                        std::cout << "Incorrect input, please, try again:";
-                    }while(rc < 0);
-
-                    std::cout << "Input target connection id:" << std::endl;
-                    do{
-                        rc = get_number(b);
-                        if(rc == 1) break;
-                        if(!rc) return 0;
-                        std::cout << "Incorrect input, please, try again:";
-                    }while(rc < 0);
-
-                    try{
-                        elem.connect_conn(a - 1, b - 1);
-                    } catch(std::runtime_error &rt){
-                        std::cout << rt.what() << std::endl;
-                    }
-                    break;
-                case 6:
-                    elem.total_reorg();
-                    break;
-                case 7:
-                    std::cout << "Input connection id to get info about:" << std::endl;
-                    do{
-                        rc = get_number(b);
-                        if(rc == 1) break;
-                        if(!rc) return 0;
-                        std::cout << "Incorrect input, please, try again:";
-                    }while(rc < 0);
-
-                    try{
-                        std::cout << "State: "
-                        << elem.get_conn_state(b - 1) << std::endl;
-                    } catch(std::runtime_error &rt){
-                        std::cout << rt.what() << std::endl;
-                    }
-                    break;
-                case 8:
-                    std::cout << "Input connection id to set state:" << std::endl;
-                    do{
-                        rc = get_number(b);
-                        if(rc == 1) break;
-                        if(!rc) return 0;
-                        std::cout << "Incorrect input, please, try again:";
-                    }while(rc < 0);
-                    std::cout << "Input new state(0 - low, 1 - high, else - X)" << std::endl;
-                    do{
-                        rc = get_number(a);
-                        if(rc == 1) break;
-                        if(!rc) return 0;
-                        std::cout << "Incorrect input, please, try again:";
-                    }while(rc < 0);
-
-                    try{
-                        elem.set_conn_state(b - 1, a - 1);
-                    } catch(std::runtime_error &rt){
-                        std::cout << rt.what() << std::endl;
-                    }
-                    break;
-                default:
-                    std::cout << "unexpected command index!" << std::endl;
-                    break;
-            }
+        con.type = (b == 1 ? IN : OUT);
+        try {
+            elem.add_conn(con);
+        } catch (std::runtime_error &rt) {
+            std::cout << rt.what() << std::endl;
         }
+        return 1;
+    }
+
+    int d_del_conn(element& elem){
+        int rc, b;
+
+        std::cout << "Input connection id to delete:" << std::endl;
+
+        do{
+            rc = input_number(b, std::cin);
+            if(rc == 1) break;
+            if(!rc) return 0;
+            std::cout << "Incorrect input, please, try again:";
+        }while(rc < 0);
+
+        try{
+            elem.delete_conn(b - 1);
+        } catch(std::runtime_error &rt){
+            std::cout << rt.what() << std::endl;
+        }
+        return 1;
+    }
+
+    int d_show_all(element& elem){
+        elem.print_conns();
+        return 1;
+    }
+
+    int d_disconnect_conn(element& elem){
+        int rc, a, b;
+
+        std::cout << "Input connection id to disconnect:" << std::endl;
+        do{
+            rc = input_number(a, std::cin);
+            if(rc == 1) break;
+            if(!rc) return 0;
+            std::cout << "Incorrect input, please, try again:";
+        }while(rc < 0);
+
+        std::cout << "Input target connection id:" << std::endl;
+        do{
+            rc = input_number(b, std::cin);
+            if(rc == 1) break;
+            if(!rc) return 0;
+            std::cout << "Incorrect input, please, try again:";
+        }while(rc < 0);
+
+        try{
+            elem.disconnect_conn(a - 1, b - 1);
+        } catch(std::runtime_error &rt){
+            std::cout << rt.what() << std::endl;
+        }
+        return 1;
+    }
+
+    int d_connect_conn(element& elem){
+        int rc, a, b;
+
+        std::cout << "Input connection id to connect:" << std::endl;
+        do{
+            rc = input_number(a, std::cin);
+            if(rc == 1) break;
+            if(!rc) return 0;
+            std::cout << "Incorrect input, please, try again:";
+        }while(rc < 0);
+
+        std::cout << "Input target connection id:" << std::endl;
+        do{
+            rc = input_number(b, std::cin);
+            if(rc == 1) break;
+            if(!rc) return 0;
+            std::cout << "Incorrect input, please, try again:";
+        }while(rc < 0);
+
+        try{
+            elem.connect_conn(a - 1, b - 1);
+        } catch(std::runtime_error &rt){
+            std::cout << rt.what() << std::endl;
+        }
+        return 1;
+    }
+
+    int d_change_all_states(element& elem){
+        elem.total_reorg();
+        return 1;
+    }
+
+    int d_print_conn_state(element& elem){
+        int rc, b;
+
+        std::cout << "Input connection id to get info about:" << std::endl;
+        do{
+            rc = input_number(b, std::cin);
+            if(rc == 1) break;
+            if(!rc) return 0;
+            std::cout << "Incorrect input, please, try again:";
+        }while(rc < 0);
+
+        try{
+            elem.get_conn_state(b - 1);
+        } catch(std::runtime_error &rt){
+            std::cout << rt.what() << std::endl;
+        }
+        return 1;
+    }
+
+    int d_set_conn_state(element& elem){
+        int rc, b, a;
+
+        std::cout << "Input connection id to set state:" << std::endl;
+        do{
+            rc = input_number(b, std::cin);
+            if(rc == 1) break;
+            if(!rc) return 0;
+            std::cout << "Incorrect input, please, try again:";
+        }while(rc < 0);
+        std::cout << "Input new state(0 - low, 1 - high, else - X)" << std::endl;
+        do{
+            rc = input_number(a, std::cin);
+            if(rc == 1) break;
+            if(!rc) return 0;
+            std::cout << "Incorrect input, please, try again:";
+        }while(rc < 0);
+
+        try{
+            elem.set_conn_state(b - 1, a - 1);
+        } catch(std::runtime_error &rt){
+            std::cout << rt.what() << std::endl;
+        }
+        return 1;
     }
 
 }
