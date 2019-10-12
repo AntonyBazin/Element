@@ -7,4 +7,4 @@ include_directories(${GTEST_INCLUDE_DIRS})
 set(CMAKE_CXX_STANDARD 14)
 
 add_executable(main.cpp element.cpp main.cpp)
-target_link_libraries(cpplab ${GTEST_LIBRARIES} pthread)
+#target_link_libraries(cpplab ${GTEST_LIBRARIES} pthread)
