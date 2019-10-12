@@ -4,7 +4,6 @@
 
 #ifndef CPPLAB3_ELEMENT_H
 #define CPPLAB3_ELEMENT_H
-#pragma once
 
 #include <iostream>
 #include <csignal>
@@ -21,7 +20,7 @@ namespace cpplab3v13{
         connection(){
             type = IM;
             condition = X;
-            for(int & socket : sockets){  //TODO: ask
+            for(int & socket : sockets){
                 socket = -1;
             }
         }
@@ -48,8 +47,8 @@ namespace cpplab3v13{
         explicit element(int in = 1, int out = 1);
         element(connection* arr, int sum);
 
-        void get_conns() const;    //selectors
-        int get_conn_state(int number) const;
+        void print_conns() const;   //TODO add stream&
+        int get_conn_state(int number) const;   //selectors
         connection get_conn(int number) const;
 
 

@@ -93,7 +93,7 @@ namespace cpplab3v13{
         return *this;
     }
 
-    void element::get_conns() const { //TODO: large method, split/overload - ?
+    void element::print_conns() const {
         std::cout << "info about all existing connections:" << std::endl;
 
         for(int i = 0; i < this->conns; ++i){
@@ -172,7 +172,7 @@ namespace cpplab3v13{
     }
 
     element &element::connect_conn(int which, int whereto) {
-        if(which < 0 || which >= connections_max)  //TODO: refactor this?
+        if(which < 0 || which >= connections_max)
             throw std::runtime_error("invalid connection index");
         if(cs[which].type == IM)
             throw std::runtime_error("there is no such connection");
@@ -248,6 +248,16 @@ namespace cpplab3v13{
         cs[which] = cs[--conns];
         cs[conns].type = IM;
         cs[conns].condition = X;
+        for(int i = 0; i < 3; ++i){
+            if(cs[which].sockets[i] != -1){
+                for(int j = 0; j < 3; ++j){
+                    if(cs[cs[which].sockets[i]].sockets[j] == conns){
+                        cs[cs[which].sockets[i]].sockets[j] = which;
+                    }
+                }
+
+            }
+        }
         return *this;
     }
 
@@ -260,7 +270,7 @@ namespace cpplab3v13{
 
     void signal_handler(int signal){
         if (signal == SIGINT) {
-            std::cerr << "SIGINT принят\n";
+            std::cerr << "SIGINT received\n";
         } else {
             std::cerr << "Unexpected signal: " << signal << "\n";
         }
@@ -331,7 +341,7 @@ namespace cpplab3v13{
 
                     break;
                 case 3:
-                    elem.get_conns();
+                    elem.print_conns();
                     break;
                 case 4:
                     std::cout << "Input connection id to disconnect:" << std::endl;
@@ -392,7 +402,8 @@ namespace cpplab3v13{
                     }while(rc < 0);
 
                     try{
-                        elem.get_conn_state(b - 1);
+                        std::cout << "State: "
+                        << elem.get_conn_state(b - 1) << std::endl;
                     } catch(std::runtime_error &rt){
                         std::cout << rt.what() << std::endl;
                     }

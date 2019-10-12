@@ -171,6 +171,9 @@ TEST(setters, setters_delete_conn_Test){
                  std::runtime_error);
     ASSERT_THROW(elem.connect_conn(100, 3),
                  std::runtime_error);
+    elem.delete_conn(3);
+    ASSERT_THROW(elem.connect_conn(0, 3),
+                 std::runtime_error);
 
 }
 

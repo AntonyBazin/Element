@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(cpplab3)
+project(cpplab)
 
 # Locate GTest
 find_package(GTest REQUIRED)
