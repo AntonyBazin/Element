@@ -271,6 +271,22 @@ namespace cpplab3v13{
         return cs[number];
     }
 
+    connection& element::operator[](int index) {
+        if(index < 0 || index >= connections_max)
+            throw std::runtime_error("invalid connection index");
+        if(cs[index].type == IM)
+            throw std::runtime_error("there is no such connection");
+        return cs[index];
+    }
+
+    connection element::operator[](int index) const { //const connection
+        if(index < 0 || index >= connections_max)
+            throw std::runtime_error("invalid connection index");
+        if(cs[index].type == IM)
+            throw std::runtime_error("there is no such connection");
+        return cs[index];
+    }
+
 
     void signal_handler(int signal){
         if (signal == SIGINT) {

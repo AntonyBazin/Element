@@ -34,7 +34,7 @@ namespace cpplab3v13{
     int input_number(T &a, std::istream& stream){
         auto previous_handler = std::signal(SIGINT, signal_handler);
         if (previous_handler == SIG_ERR) {
-            std::cerr << "Установка сигнала неудачна\n";
+            std::cerr << "signal set failed!\n";
             return EXIT_FAILURE;
         }
         stream >> a;
@@ -66,6 +66,9 @@ namespace cpplab3v13{
         element& disconnect_conn(int which);
         element& add_conn(connection newcomer);
         element& delete_conn(int which);
+
+        connection& operator [](int);
+        connection operator [](int) const;
     };
 
     int d_add_conn(element&),
