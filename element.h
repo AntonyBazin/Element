@@ -11,6 +11,9 @@
 
 namespace cpplab3v13{
 
+    int dialog();
+    void signal_handler(int);
+
     enum conditions{LOW, HIGH, X};
     enum types{IN, OUT, IM};
 
@@ -29,6 +32,11 @@ namespace cpplab3v13{
 
     template <class T>
     int input_number(T &a, std::istream& stream){
+        auto previous_handler = std::signal(SIGINT, signal_handler);
+        if (previous_handler == SIG_ERR) {
+            std::cerr << "Установка сигнала неудачна\n";
+            return EXIT_FAILURE;
+        }
         stream >> a;
         if(stream.eof()) return 0;    // eof
         if (!stream.good()){
@@ -55,16 +63,10 @@ namespace cpplab3v13{
         element& total_reorg(); //for overloading   //modificators
         element& set_conn_state(int number, int new_state);
         element& connect_conn(int which, int whereto);
-        element& disconnect_conn(int which, int disconn_id);
+        element& disconnect_conn(int which);
         element& add_conn(connection newcomer);
         element& delete_conn(int which);
-
-
     };
-
-
-    int dialog();
-    void signal_handler(int);
 
     int d_add_conn(element&),
         d_del_conn(element&),

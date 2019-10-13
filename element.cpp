@@ -212,25 +212,29 @@ namespace cpplab3v13{
         return *this;
     }
 
-    element &element::disconnect_conn(int which, int disconn_id) {
+    element &element::disconnect_conn(int which) {
         if(which < 0 || which >= connections_max)
             throw std::runtime_error("invalid connection index");
         if(cs[which].type == IM)
             throw std::runtime_error("there is no such connection");
-        if(disconn_id < 0 || disconn_id >= connections_max)
-            throw std::runtime_error("invalid connection index");
-        if(cs[disconn_id].type == IM)
-            throw std::runtime_error("there is no such connection");
 
-        for(int i = 0; i < 3; ++i){
-            if(cs[which].sockets[i] == disconn_id)
-                cs[which].sockets[i] = -1;
-        }
-        for(int i = 0; i < 3; ++i){
-            if(cs[disconn_id].sockets[i] == which){
-                cs[disconn_id].sockets[i] = -1;
+        if(cs[which].type == IN){
+            if(cs[which].sockets[0] != -1){
+                for(int i = 0; i < 3; ++i){
+                    if(cs[cs[which].sockets[0]].sockets[i] == which)
+                        cs[cs[which].sockets[0]].sockets[i] = -1;
+                }
+            }
+        } else{
+            for(int i = 0; i < 3; ++i){ //OUT-type has 3 available sockets
+                if(cs[which].sockets[i] != -1){   // find a connected socket
+                    for(int j = 0; j < connections_max; ++j){ //find where to
+                            cs[cs[which].sockets[i]].sockets[0] = -1; //OUT can only be connected to IN
+                    } //and IN has only one available socket
+                }
             }
         }
+
         return *this;
     }
 
@@ -282,10 +286,10 @@ namespace cpplab3v13{
         char *report = (char*)"";
         int rc, i, n;
         do{
-            std::cout << report;
+            std::cout << report << std::endl;
             report = (char*)"You are wrong. Please, try again.";
             for(i = 0; i < NMsgs; ++i) {  //print list of alternatives
-                std::cout << messages[i];
+                std::cout << messages[i] << std::endl;
             }
             printf("Make your choice: ~ ");
             n = input_number(rc, std::cin);  //enter number of alternative
@@ -343,7 +347,7 @@ namespace cpplab3v13{
     }
 
     int d_disconnect_conn(element& elem){
-        int rc, a, b;
+        int rc, a;
 
         std::cout << "Input connection id to disconnect:" << std::endl;
         do{
@@ -353,16 +357,8 @@ namespace cpplab3v13{
             std::cout << "Incorrect input, please, try again:";
         }while(rc < 0);
 
-        std::cout << "Input target connection id:" << std::endl;
-        do{
-            rc = input_number(b, std::cin);
-            if(rc == 1) break;
-            if(!rc) return 0;
-            std::cout << "Incorrect input, please, try again:";
-        }while(rc < 0);
-
         try{
-            elem.disconnect_conn(a - 1, b - 1);
+            elem.disconnect_conn(a - 1);
         } catch(std::runtime_error &rt){
             std::cout << rt.what() << std::endl;
         }
