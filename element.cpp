@@ -13,7 +13,7 @@ namespace cpplab3v13{
                               "4. Disconnect something",
                               "5. Connect something",
                               "6. Total state change",
-                              "7. Get connection info",
+                              "7. Get connection state",
                               "8. Set connection state"};
 
     const int NMsgs = sizeof(messages)/sizeof(messages[0]);
@@ -235,6 +235,16 @@ namespace cpplab3v13{
             throw std::runtime_error("invalid connection index");
         if(cs[index].type == IM)
             throw std::runtime_error("there is no such connection");
+        bool lonely = true;
+        for(int i = 0; i < 3; ++i){
+            if(cs[index].sockets[i] != -1){
+                lonely = false;
+                break;
+            }
+        }
+        if(lonely)
+            throw std::runtime_error("only X state permitted for lonely connections!");
+
         return cs[index].condition;
     }
 
@@ -285,20 +295,6 @@ namespace cpplab3v13{
         }
 
         return *this;
-    }
-
-    int element::check_conn(int which) {
-        bool lonely = true;
-        for(int i = 0; i < 3; ++i){
-            if(cs[which].sockets[i] != -1){
-                lonely = false;
-                break;
-            }
-        }
-        if(lonely)
-            throw std::runtime_error("only X state permitted for lonely connections!");
-
-        return 1;
     }
 
 
@@ -429,8 +425,9 @@ namespace cpplab3v13{
 
     int d_print_conn_state(element& elem){
         int rc, b;
+        const element elemc = elem;
 
-        std::cout << "Input connection id to get info about:" << std::endl;
+        std::cout << "Input connection id to get its\' state:" << std::endl;
         do{
             rc = input_number(b, std::cin);
             if(rc == 1) break;
@@ -439,7 +436,7 @@ namespace cpplab3v13{
         }while(rc < 0);
 
         try{
-            std::cout << elem[b - 1];
+            std::cout << elemc[b - 1];
         } catch(std::runtime_error &rt){
             std::cout << rt.what() << std::endl;
         }
@@ -456,13 +453,6 @@ namespace cpplab3v13{
             if(!rc) return 0;
             std::cout << "Incorrect input, please, try again:";
         }while(rc < 0);
-
-        try {
-            elem.check_conn(b - 1);
-        } catch(std::runtime_error &rt){
-            std::cout << rt.what() << std::endl;
-            return 1;
-        }
 
         std::cout << "Input new state(0 - low, 1 - high, else - X)" << std::endl;
         do{

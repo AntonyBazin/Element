@@ -65,7 +65,6 @@ namespace cpplab3v13{
         element& disconnect_conn(int which);
         element& add_conn(connection newcomer);
         element& delete_conn(int which);
-        int check_conn(int which);
 
         element& operator ()(int which, int whereto);  // connect conns
 
