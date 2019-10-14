@@ -67,8 +67,9 @@ namespace cpplab3v13{
         element& add_conn(connection newcomer);
         element& delete_conn(int which);
 
-        connection& operator [](int);
-        connection operator [](int) const;
+        element& operator ()(int, int);
+        conditions& operator [](int);
+        conditions operator [](int) const;
     };
 
     int d_add_conn(element&),

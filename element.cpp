@@ -271,20 +271,61 @@ namespace cpplab3v13{
         return cs[number];
     }
 
-    connection& element::operator[](int index) {
+    conditions& element::operator[](int index) {
         if(index < 0 || index >= connections_max)
             throw std::runtime_error("invalid connection index");
         if(cs[index].type == IM)
             throw std::runtime_error("there is no such connection");
-        return cs[index];
+        return cs[index].condition;
     }
 
-    connection element::operator[](int index) const { //const connection
+    conditions element::operator[](int index) const { //const connection
         if(index < 0 || index >= connections_max)
             throw std::runtime_error("invalid connection index");
         if(cs[index].type == IM)
             throw std::runtime_error("there is no such connection");
-        return cs[index];
+        return cs[index].condition;
+    }
+
+    element &element::operator()(int which, int whereto) {
+        if(which < 0 || which >= connections_max)
+            throw std::runtime_error("invalid connection index");
+        if(cs[which].type == IM)
+            throw std::runtime_error("there is no such connection");
+        if(whereto < 0 || whereto >= connections_max)
+            throw std::runtime_error("invalid connection index");
+        if(cs[whereto].type == IM)
+            throw std::runtime_error("there is no such connection");
+        if(cs[whereto].type == cs[which].type)
+            throw std::runtime_error("you can\'t connect same types");
+
+        if(cs[which].type == OUT){
+            int h = which;
+            which = whereto;
+            whereto = h;
+        }
+
+        for(int i = 0; i < 3; ++i){
+            if(cs[whereto].sockets[i] == -1){
+                break;
+            }
+            if(i == 2)
+                throw std::runtime_error("no place to plug in in target");
+        }
+
+        if(cs[which].sockets[0] != -1)
+            throw std::runtime_error("this connection is busy! disconnect it first!");
+        else
+            cs[which].sockets[0] = whereto;
+
+        for(int i = 0; i < 3; ++i){
+            if(cs[whereto].sockets[i] == -1){
+                cs[whereto].sockets[i] = which;
+                break;
+            }
+        }
+
+        return *this;
     }
 
 
@@ -401,7 +442,7 @@ namespace cpplab3v13{
         }while(rc < 0);
 
         try{
-            elem.connect_conn(a - 1, b - 1);
+            elem(a - 1, b - 1);
         } catch(std::runtime_error &rt){
             std::cout << rt.what() << std::endl;
         }
