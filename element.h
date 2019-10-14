@@ -62,14 +62,15 @@ namespace cpplab3v13{
 
         element& total_reorg(); //for overloading   //modificators
         element& set_conn_state(int number, int new_state);
-        element& connect_conn(int which, int whereto);
         element& disconnect_conn(int which);
         element& add_conn(connection newcomer);
         element& delete_conn(int which);
+        int check_conn(int which);
 
-        element& operator ()(int, int);
-        conditions& operator [](int);
-        conditions operator [](int) const;
+        element& operator ()(int which, int whereto);  // connect conns
+
+        conditions& operator [](int);    // set state
+        conditions operator [](int) const;   // get state
     };
 
     int d_add_conn(element&),

@@ -171,47 +171,6 @@ namespace cpplab3v13{
         return cs[number].condition;
     }
 
-    element &element::connect_conn(int which, int whereto) {
-        if(which < 0 || which >= connections_max)
-            throw std::runtime_error("invalid connection index");
-        if(cs[which].type == IM)
-            throw std::runtime_error("there is no such connection");
-        if(whereto < 0 || whereto >= connections_max)
-            throw std::runtime_error("invalid connection index");
-        if(cs[whereto].type == IM)
-            throw std::runtime_error("there is no such connection");
-        if(cs[whereto].type == cs[which].type)
-            throw std::runtime_error("you can\'t connect same types");
-
-        if(cs[which].type == OUT){
-            int h = which;
-            which = whereto;
-            whereto = h;
-        }
-
-        for(int i = 0; i < 3; ++i){
-            if(cs[whereto].sockets[i] == -1){
-                break;
-            }
-            if(i == 2)
-                throw std::runtime_error("no place to plug in in target");
-        }
-
-        if(cs[which].sockets[0] != -1)
-            throw std::runtime_error("this connection is busy! disconnect it first!");
-        else
-            cs[which].sockets[0] = whereto;
-
-        for(int i = 0; i < 3; ++i){
-            if(cs[whereto].sockets[i] == -1){
-                cs[whereto].sockets[i] = which;
-                break;
-            }
-        }
-
-        return *this;
-    }
-
     element &element::disconnect_conn(int which) {
         if(which < 0 || which >= connections_max)
             throw std::runtime_error("invalid connection index");
@@ -326,6 +285,20 @@ namespace cpplab3v13{
         }
 
         return *this;
+    }
+
+    int element::check_conn(int which) {
+        bool lonely = true;
+        for(int i = 0; i < 3; ++i){
+            if(cs[which].sockets[i] != -1){
+                lonely = false;
+                break;
+            }
+        }
+        if(lonely)
+            throw std::runtime_error("only X state permitted for lonely connections!");
+
+        return 1;
     }
 
 
@@ -466,7 +439,7 @@ namespace cpplab3v13{
         }while(rc < 0);
 
         try{
-            elem.get_conn_state(b - 1);
+            std::cout << elem[b - 1];
         } catch(std::runtime_error &rt){
             std::cout << rt.what() << std::endl;
         }
@@ -483,6 +456,14 @@ namespace cpplab3v13{
             if(!rc) return 0;
             std::cout << "Incorrect input, please, try again:";
         }while(rc < 0);
+
+        try {
+            elem.check_conn(b - 1);
+        } catch(std::runtime_error &rt){
+            std::cout << rt.what() << std::endl;
+            return 1;
+        }
+
         std::cout << "Input new state(0 - low, 1 - high, else - X)" << std::endl;
         do{
             rc = input_number(a, std::cin);
@@ -492,7 +473,7 @@ namespace cpplab3v13{
         }while(rc < 0);
 
         try{
-            elem.set_conn_state(b - 1, a - 1);
+            elem[b - 1] = static_cast<conditions>(a - 1);
         } catch(std::runtime_error &rt){
             std::cout << rt.what() << std::endl;
         }
