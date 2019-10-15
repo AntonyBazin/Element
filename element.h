@@ -31,6 +31,30 @@ namespace cpplab3v13{
         connection& set_cond(int);
     };
 
+    class element{
+    private:
+        static const int connections_max = 10;
+        int conns;
+        connection cs[connections_max];
+    public:
+        explicit element(int in = 1, int out = 1);
+        explicit element(connection);
+        element(connection* arr, int sum);
+
+        void print_conns() const;   //TODO add stream&
+
+        element& total_reorg(); //for overloading   //modificators
+        element& disconnect_conn(int which);
+        element& add_conn(connection newcomer);
+        element& delete_conn(int which);
+
+        element& operator ()(int which, int whereto);  // connect conns
+
+        connection& operator [](int);    // set state
+        connection operator [](int) const;   // get state
+        element& operator +=(const element&);
+    };
+
     template <class T>
     int input_number(T &a, std::istream& stream){
         auto previous_handler = std::signal(SIGINT, signal_handler);
@@ -47,31 +71,6 @@ namespace cpplab3v13{
         }
         return 1;
     }
-
-    class element{
-    private:
-        static const int connections_max = 10;
-        int conns;
-        connection cs[connections_max];
-    public:
-        explicit element(int in = 1, int out = 1);
-        element(connection* arr, int sum);
-
-        void print_conns() const;   //TODO add stream&
-        int get_conn_state(int number) const;   //selectors
-        connection get_conn(int number) const;
-
-        element& total_reorg(); //for overloading   //modificators
-        element& set_conn_state(int number, int new_state);
-        element& disconnect_conn(int which);
-        element& add_conn(connection newcomer);
-        element& delete_conn(int which);
-
-        element& operator ()(int which, int whereto);  // connect conns
-
-        connection& operator [](int);    // set state
-        connection operator [](int) const;   // get state
-    };
 
     int d_add_conn(element&),
         d_del_conn(element&),

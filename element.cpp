@@ -38,6 +38,10 @@ namespace cpplab3v13{
         }
     }
 
+    element::element(connection cn) {
+        conns = 1;
+        cs[0] = cn;
+    }
 
     element &element::add_conn(connection newcomer) {
         if(this->conns >= connections_max)
@@ -80,13 +84,13 @@ namespace cpplab3v13{
 
             switch(c){
                 case 0:
-                    set_conn_state(i, 0);
+                    cs[i].set_cond(0);
                     break;
                 case 1:
-                    set_conn_state(i, 1);
+                    cs[i].set_cond(1);
                     break;
                 default:
-                    set_conn_state(i, 2);
+                    cs[i].set_cond(2);
                    break;
             }
         }
@@ -134,42 +138,6 @@ namespace cpplab3v13{
         }
     }
 
-    element &element::set_conn_state(int number, int new_state) {
-        if(number < 0 || number >= connections_max)
-            throw std::runtime_error("invalid connection index");
-        if(cs[number].type == IM)
-            throw std::runtime_error("there is no such connection");
-        bool lonely = true;
-        for(int i = 0; i < 3; ++i){
-            if(cs[number].sockets[i] != -1){
-                lonely = false;
-                break;
-            }
-        }
-        if(lonely)
-            throw std::runtime_error("only X state permitted for lonely connections");
-
-        switch(new_state){
-            case 0:
-                cs[number].condition = LOW;
-                break;
-            case 1:
-                cs[number].condition = HIGH;
-                break;
-            default:
-                cs[number].condition = X;
-                break;
-        }
-        return *this;
-    }
-
-    int element::get_conn_state(int number) const {
-        if(number < 0 || number >= connections_max)
-            throw std::runtime_error("invalid connection index");
-        if(cs[number].type == IM)
-            throw std::runtime_error("there is no such connection");
-        return cs[number].condition;
-    }
 
     element &element::disconnect_conn(int which) {
         if(which < 0 || which >= connections_max)
@@ -222,12 +190,6 @@ namespace cpplab3v13{
             }
         }
         return *this;
-    }
-
-    connection element::get_conn(int number) const {
-        if(number < 0 || number >= connections_max)
-            throw std::runtime_error("invalid connection index");
-        return cs[number];
     }
 
     connection& element::operator[](int index) {
@@ -287,6 +249,18 @@ namespace cpplab3v13{
         return *this;
     }
 
+    element &element::operator+=(const element& elem) {
+        for(int  i = 0, j = 0; i < connections_max; ++i){
+            if(cs[i].type == IM){
+                if(j >= elem.conns) break;   // end of conns in elem
+                cs[i] = elem.cs[j];
+                ++conns;
+                ++j;
+            }
+        }
+        return *this;
+    }
+
 
     void signal_handler(int signal){
         if (signal == SIGINT) {
@@ -330,7 +304,7 @@ namespace cpplab3v13{
 
         con.type = (b == 1 ? IN : OUT);
         try {
-            elem.add_conn(con);
+            elem += element(con);
         } catch (std::runtime_error &rt) {
             std::cout << rt.what() << std::endl;
         }
@@ -453,7 +427,7 @@ namespace cpplab3v13{
         }while(rc < 0);
 
         try{
-            elem[b - 1].set_cond(a - 1);
+            elem[b - 1].set_cond(a);
         } catch(std::runtime_error &rt){
             std::cout << rt.what() << std::endl;
         }
