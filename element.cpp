@@ -68,17 +68,30 @@ namespace cpplab3v13{
                     if(cs[cs[which].sockets[0]].sockets[i] == which)
                         cs[cs[which].sockets[0]].sockets[i] = -1;
                 }
+                cs[which].sockets[0] = -1;
+                bool lonely = true;
+                for(int j = 0; j < 3; ++j){
+                    if(cs[cs[which].sockets[0]].sockets[j] != -1){
+                        lonely = false;
+                        break;
+                    }
+                }
+                if(lonely) cs[cs[which].sockets[0]].condition = X;
             }
         } else{
             for(int i = 0; i < 3; ++i){ //OUT-type has 3 available sockets
                 if(cs[which].sockets[i] != -1){   // find a connected socket
                     for(int j = 0; j < connections_max; ++j){ //find where to
-                            cs[cs[which].sockets[i]].sockets[0] = -1; //OUT can only be connected to IN
-                    } //and IN has only one available socket
+                        cs[cs[which].sockets[i]].sockets[0] = -1; //OUT can only be connected to IN
+                        cs[cs[which].sockets[i]].condition = X;//and IN has only one available socket
+                    }
                 }
             }
+            for(int i = 0; i < 3; ++i){
+                cs[which].sockets[i] = -1;
+            }
         }
-
+        cs[which].condition = X;
         return *this;
     }
 
