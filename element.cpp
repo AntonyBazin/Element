@@ -56,89 +56,6 @@ namespace cpplab3v13{
         return *this;
     }
 
-    element &element::total_reorg() {
-        int c, rc;
-        for(int i = 0; i < this->conns; ++i){
-
-            bool lonely = true;
-            for(int j = 0; j < 3; ++j){
-                if(cs[i].sockets[j] != -1){
-                    lonely = false;
-                    break;
-                }
-            }
-            if(lonely) continue;
-
-            std::cout << "please, enter the condition(1 for high signal level, "
-            << "0 for low signal level, anything else for X)"
-            << std::endl << "Of connection #" << (i + 1)
-            << " of type " << (cs[i].type == IN ? "INPUT:" : "OUTPUT:")
-            << std::endl;
-
-            do{
-                rc = input_number(c, std::cin);
-                if(rc == 1) break;
-                if(!rc) return *this;  // eof
-                std::cout << "incorrect input, please, try again:";
-            }while(rc < 0);
-
-            switch(c){
-                case 0:
-                    cs[i].set_cond(0);
-                    break;
-                case 1:
-                    cs[i].set_cond(1);
-                    break;
-                default:
-                    cs[i].set_cond(2);
-                   break;
-            }
-        }
-        return *this;
-    }
-
-    void element::print_conns() const {
-        std::cout << "info about all existing connections:" << std::endl;
-
-        for(int i = 0; i < this->conns; ++i){
-            std::cout << "connection #" << (i+1) << ":" << std::endl
-            << "Condition: ";
-            switch(cs[i].condition){
-                case 0:
-                    std::cout << "LOW; ";
-                    break;
-                case 1:
-                    std::cout << "HIGH; ";
-                    break;
-                default:
-                    std::cout << "NOT DEFINED; ";
-                    break;
-            }
-
-            std::cout << "type: ";
-            switch(cs[i].type){
-                case 0:
-                    std::cout << "INPUT; ";
-                    break;
-                case 1:
-                    std::cout << "OUTPUT; ";
-                    break;
-                default:
-                    std::cout << "IMAGINARY; ";
-                    break;
-            }
-
-            std::cout << "connected to elements:";
-            for(int j = 0; j < 3; ++j){
-                if(cs[i].sockets[j] != -1){
-                    std::cout << " " << (cs[i].sockets[j] + 1);
-                }
-            }
-            std::cout << std::endl << std::endl;
-        }
-    }
-
-
     element &element::disconnect_conn(int which) {
         if(which < 0 || which >= connections_max)
             throw std::runtime_error("invalid connection index");
@@ -261,6 +178,85 @@ namespace cpplab3v13{
         return *this;
     }
 
+    std::ostream &operator <<(std::ostream& s, const element& elem) {
+        s << "info about all existing connections:" << std::endl;
+
+        for(int i = 0; i < elem.conns; ++i){
+            s << "connection #" << (i+1) << ":" << std::endl << "Condition: ";
+            switch(elem.cs[i].condition){
+                case 0:
+                    s << "LOW; ";
+                    break;
+                case 1:
+                    s << "HIGH; ";
+                    break;
+                default:
+                    s << "NOT DEFINED; ";
+                    break;
+            }
+            s << "type: ";
+            switch(elem.cs[i].type){
+                case 0:
+                    s << "INPUT; ";
+                    break;
+                case 1:
+                    s << "OUTPUT; ";
+                    break;
+                default:
+                    s << "IMAGINARY; ";
+                    break;
+            }
+            s << "connected to elements:";
+            for(int j = 0; j < 3; ++j){
+                if(elem.cs[i].sockets[j] != -1){
+                    s << " " << (elem.cs[i].sockets[j] + 1);
+                }
+            }
+            s << std::endl << std::endl;
+        }
+        return s;
+    }
+
+    std::istream &operator >>(std::istream& s, element& elem) {
+        int c, rc;
+        for(int i = 0; i < elem.conns; ++i){
+            bool lonely = true;
+            for(int j = 0; j < 3; ++j){
+                if(elem.cs[i].sockets[j] != -1){
+                    lonely = false;
+                    break;
+                }
+            }
+            if(lonely) continue;
+
+            std::cout << "please, enter the condition(1 for high signal level, "
+                      << "0 for low signal level, anything else for X)"
+                      << std::endl << "Of connection #" << (i + 1)
+                      << " of type " << (elem.cs[i].type == IN ? "INPUT:" : "OUTPUT:")
+                      << std::endl;
+
+            do{
+                rc = input_number(c, s);
+                if(rc == 1) break;
+                if(!rc) return s;  // eof
+                std::cout << "incorrect input, please, try again:";
+            }while(rc < 0);
+
+            switch(c){
+                case 0:
+                    elem.cs[i].set_cond(0);
+                    break;
+                case 1:
+                    elem.cs[i].set_cond(1);
+                    break;
+                default:
+                    elem.cs[i].set_cond(2);
+                    break;
+            }
+        }
+        return s;
+    }
+
 
     void signal_handler(int signal){
         if (signal == SIGINT) {
@@ -332,7 +328,7 @@ namespace cpplab3v13{
     }
 
     int d_show_all(element& elem){
-        elem.print_conns();
+        std::cout << elem;
         return 1;
     }
 
@@ -383,7 +379,7 @@ namespace cpplab3v13{
     }
 
     int d_change_all_states(element& elem){
-        elem.total_reorg();
+        std::cin >> elem;
         return 1;
     }
 

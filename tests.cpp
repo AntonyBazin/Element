@@ -8,9 +8,9 @@
 
 TEST(element_construtor, element_construtor_default_constructor__Test){
     cpplab3v13::element elem;
-    ASSERT_NO_THROW(elem.get_conn(0));
-    ASSERT_NO_THROW(elem.get_conn(1));
-    cpplab3v13::connection c1 = elem.get_conn(0), c2  = elem.get_conn(1);
+    ASSERT_NO_THROW(elem[0]);
+    ASSERT_NO_THROW(elem[1]);
+    cpplab3v13::connection c1 = elem[0], c2  = elem[1];
     ASSERT_EQ(c1.condition, cpplab3v13::X);
     ASSERT_EQ(c2.condition, cpplab3v13::X);
     ASSERT_EQ(c1.type, cpplab3v13::IN);

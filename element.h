@@ -37,22 +37,21 @@ namespace cpplab3v13{
         int conns;
         connection cs[connections_max];
     public:
-        explicit element(int in = 1, int out = 1);
+        explicit element(int in = 1, int out = 1);  // constructors
         explicit element(connection);
         element(connection* arr, int sum);
 
-        void print_conns() const;   //TODO add stream&
-
-        element& total_reorg(); //for overloading   //modificators
-        element& disconnect_conn(int which);
+        element& disconnect_conn(int which);  // modificators
         element& add_conn(connection newcomer);
         element& delete_conn(int which);
 
         element& operator ()(int which, int whereto);  // connect conns
-
         connection& operator [](int);    // set state
         connection operator [](int) const;   // get state
-        element& operator +=(const element&);
+        element& operator +=(const element&);  // for adding a connection
+
+        friend std::istream& operator >> (std::istream&, element&);  // total reorg of stats
+        friend std::ostream& operator << (std::ostream&, const element&);  // print all
     };
 
     template <class T>
