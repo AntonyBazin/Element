@@ -28,6 +28,7 @@ namespace cpplab3v13{
                 socket = -1;
             }
         }
+        connection& set_cond(int);
     };
 
     template <class T>
@@ -68,8 +69,8 @@ namespace cpplab3v13{
 
         element& operator ()(int which, int whereto);  // connect conns
 
-        conditions& operator [](int);    // set state
-        conditions operator [](int) const;   // get state
+        connection& operator [](int);    // set state
+        connection operator [](int) const;   // get state
     };
 
     int d_add_conn(element&),

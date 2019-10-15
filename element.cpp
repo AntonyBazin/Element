@@ -230,30 +230,20 @@ namespace cpplab3v13{
         return cs[number];
     }
 
-    conditions& element::operator[](int index) {
+    connection& element::operator[](int index) {
         if(index < 0 || index >= connections_max)
             throw std::runtime_error("invalid connection index");
         if(cs[index].type == IM)
             throw std::runtime_error("there is no such connection");
-        bool lonely = true;
-        for(int i = 0; i < 3; ++i){
-            if(cs[index].sockets[i] != -1){
-                lonely = false;
-                break;
-            }
-        }
-        if(lonely)
-            throw std::runtime_error("only X state permitted for lonely connections!");
-
-        return cs[index].condition;
+        return cs[index];
     }
 
-    conditions element::operator[](int index) const { //const connection
+    connection element::operator[](int index) const { //const connection
         if(index < 0 || index >= connections_max)
             throw std::runtime_error("invalid connection index");
         if(cs[index].type == IM)
             throw std::runtime_error("there is no such connection");
-        return cs[index].condition;
+        return cs[index];
     }
 
     element &element::operator()(int which, int whereto) {
@@ -350,7 +340,7 @@ namespace cpplab3v13{
     int d_del_conn(element& elem){
         int rc, b;
 
-        std::cout << "Input connection id to delete:" << std::endl;
+        std::cout << "Input connection\'s current id to delete:" << std::endl;
 
         do{
             rc = input_number(b, std::cin);
@@ -375,7 +365,7 @@ namespace cpplab3v13{
     int d_disconnect_conn(element& elem){
         int rc, a;
 
-        std::cout << "Input connection id to disconnect:" << std::endl;
+        std::cout << "Input connection\'s current id to disconnect:" << std::endl;
         do{
             rc = input_number(a, std::cin);
             if(rc == 1) break;
@@ -394,7 +384,7 @@ namespace cpplab3v13{
     int d_connect_conn(element& elem){
         int rc, a, b;
 
-        std::cout << "Input connection id to connect:" << std::endl;
+        std::cout << "Input connection\'s current id to connect:" << std::endl;
         do{
             rc = input_number(a, std::cin);
             if(rc == 1) break;
@@ -427,7 +417,7 @@ namespace cpplab3v13{
         int rc, b;
         const element elemc = elem;
 
-        std::cout << "Input connection id to get its\' state:" << std::endl;
+        std::cout << "Input connection\'s current id to get its\' state:" << std::endl;
         do{
             rc = input_number(b, std::cin);
             if(rc == 1) break;
@@ -436,7 +426,7 @@ namespace cpplab3v13{
         }while(rc < 0);
 
         try{
-            std::cout << elemc[b - 1];
+            std::cout << elemc[b - 1].condition;
         } catch(std::runtime_error &rt){
             std::cout << rt.what() << std::endl;
         }
@@ -446,7 +436,7 @@ namespace cpplab3v13{
     int d_set_conn_state(element& elem){
         int rc, b, a;
 
-        std::cout << "Input connection id to set state:" << std::endl;
+        std::cout << "Input connection\'s current id to set state:" << std::endl;
         do{
             rc = input_number(b, std::cin);
             if(rc == 1) break;
@@ -463,11 +453,37 @@ namespace cpplab3v13{
         }while(rc < 0);
 
         try{
-            elem[b - 1] = static_cast<conditions>(a - 1);
+            elem[b - 1].set_cond(a - 1);
         } catch(std::runtime_error &rt){
             std::cout << rt.what() << std::endl;
         }
         return 1;
     }
 
+    connection &connection::set_cond(int new_state) {
+        if(type == IM)
+            throw std::runtime_error("there is no such connection");
+        bool lonely = true;
+        for(int i = 0; i < 3; ++i){
+            if(sockets[i] != -1){
+                lonely = false;
+                break;
+            }
+        }
+        if(lonely)
+            throw std::runtime_error("only X state permitted for lonely connections");
+
+        switch(new_state){
+            case 0:
+                condition = LOW;
+                break;
+            case 1:
+                condition = HIGH;
+                break;
+            default:
+                condition = X;
+                break;
+        }
+        return *this;
+    }
 }
