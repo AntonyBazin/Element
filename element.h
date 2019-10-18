@@ -43,10 +43,11 @@ namespace cpplab3v13{
         element& disconnect_conn(int which);  // modificators
         element& add_conn(connection newcomer);
         element& delete_conn(int which);
+        connection get_conn(int id) const;
 
         element& operator ()(int which, int whereto);  // connect conns
-        connection& operator [](int);    // set state
-        connection operator [](int) const;   // get state
+        conditions& operator [](int);    // set state
+        conditions operator [](int) const;   // get state
         element& operator +=(const element&);  // for adding a connection
 
         friend std::istream& operator >> (std::istream&, element&);  // total reorg of stats

@@ -122,20 +122,20 @@ namespace cpplab3v13{
         return *this;
     }
 
-    connection& element::operator[](const int index) {
+    conditions& element::operator[](const int index) {
         if(index < 0 || index >= connections_max)
             throw std::runtime_error("invalid connection index");
         if(cs[index].type == IM)
             throw std::runtime_error("there is no such connection");
-        return cs[index];
+        return cs[index].condition;
     }
 
-    connection element::operator[](const int index) const { //const connection
+    conditions element::operator[](const int index) const { //const connection
         if(index < 0 || index >= connections_max)
             throw std::runtime_error("invalid connection index");
         if(cs[index].type == IM)
             throw std::runtime_error("there is no such connection");
-        return cs[index];
+        return cs[index].condition;
     }
 
     element &element::operator()(int which, int whereto) {
@@ -268,6 +268,13 @@ namespace cpplab3v13{
             }
         }
         return s;
+    }
+
+
+    connection element::get_conn(int id) const {
+        if(id < 0 || id >= connections_max)
+            throw std::runtime_error("invalid connection index");
+        return cs[id];
     }
 
 
@@ -409,7 +416,7 @@ namespace cpplab3v13{
         }while(rc < 0);
 
         try{
-            std::cout << elemc[b - 1].condition;
+            std::cout << elemc[b - 1];
         } catch(std::runtime_error &rt){
             std::cout << rt.what() << std::endl;
         }
@@ -436,7 +443,7 @@ namespace cpplab3v13{
         }while(rc < 0);
 
         try{
-            elem[b - 1].set_cond(a);
+            elem[b - 1] = static_cast<conditions>(a);
         } catch(std::runtime_error &rt){
             std::cout << rt.what() << std::endl;
         }
