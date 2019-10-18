@@ -38,12 +38,12 @@ namespace cpplab3v13{
         }
     }
 
-    element::element(connection cn) {
+    element::element(const connection cn) {
         conns = 1;
         cs[0] = cn;
     }
 
-    element &element::add_conn(connection newcomer) {
+    element &element::add_conn(const connection newcomer) {
         if(this->conns >= connections_max)
             throw std::runtime_error("Too many connections to add more!");
         for(int i = 0; i < connections_max; ++i){
@@ -56,7 +56,7 @@ namespace cpplab3v13{
         return *this;
     }
 
-    element &element::disconnect_conn(int which) {
+    element &element::disconnect_conn(const int which) {
         if(which < 0 || which >= connections_max)
             throw std::runtime_error("invalid connection index");
         if(cs[which].type == IM)
@@ -95,7 +95,7 @@ namespace cpplab3v13{
         return *this;
     }
 
-    element &element::delete_conn(int which) {
+    element &element::delete_conn(const int which) {
         if(which < 0 || which >= connections_max)
             throw std::runtime_error("invalid connection index");
         if(cs[which].type == IM)
@@ -122,7 +122,7 @@ namespace cpplab3v13{
         return *this;
     }
 
-    connection& element::operator[](int index) {
+    connection& element::operator[](const int index) {
         if(index < 0 || index >= connections_max)
             throw std::runtime_error("invalid connection index");
         if(cs[index].type == IM)
@@ -130,7 +130,7 @@ namespace cpplab3v13{
         return cs[index];
     }
 
-    connection element::operator[](int index) const { //const connection
+    connection element::operator[](const int index) const { //const connection
         if(index < 0 || index >= connections_max)
             throw std::runtime_error("invalid connection index");
         if(cs[index].type == IM)
@@ -242,9 +242,9 @@ namespace cpplab3v13{
             }
             if(lonely) continue;
 
-            std::cout << "please, enter the condition(1 for high signal level, "
+            std::cout << "Please, enter the condition(1 for high signal level, "
                       << "0 for low signal level, anything else for X)"
-                      << std::endl << "Of connection #" << (i + 1)
+                      << std::endl << "of connection #" << (i + 1)
                       << " of type " << (elem.cs[i].type == IN ? "INPUT:" : "OUTPUT:")
                       << std::endl;
 

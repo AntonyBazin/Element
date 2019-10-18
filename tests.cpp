@@ -142,14 +142,14 @@ TEST(setters, setters_add_conn_Test){
     elem(0, 1);
     cpplab3v13::connection con1;
     con1.type = cpplab3v13::IN;
-    elem.add_conn(con1);
+    elem += cpplab3v13::element(con1); // like this
     ASSERT_THROW(elem[2].set_cond(1),
                  std::runtime_error);
     ASSERT_THROW(elem(0, 2),
             std::runtime_error);
     cpplab3v13::connection con2;
     con2.type = cpplab3v13::OUT;
-    elem.add_conn(con2);
+    elem.add_conn(con2);  // or like this
     ASSERT_THROW(elem(0, 3),
                  std::runtime_error);
     ASSERT_THROW(elem(1, 3),
@@ -162,16 +162,39 @@ TEST(setters, setters_delete_conn_Test){
     cpplab3v13::connection con1, con2;
     con1.type = cpplab3v13::IN;
     con2.type = cpplab3v13::OUT;
-    elem.add_conn(con1);
-    elem.add_conn(con2);
+    elem += cpplab3v13::element(con1);
+    elem += cpplab3v13::element(con2);
+    elem(1, 2);
     ASSERT_THROW(elem.disconnect_conn(-1),
                  std::runtime_error);
     ASSERT_THROW(elem(100, 3),
                  std::runtime_error);
-    elem.delete_conn(3);
+    elem.delete_conn(2);
     ASSERT_THROW(elem(0, 3),
                  std::runtime_error);
+    ASSERT_EQ(elem[2].type, cpplab3v13::OUT);
 
+}
+
+
+TEST(IOoperator, input_operator_Test){
+    cpplab3v13::element elem;
+    elem(0, 1);
+    std::istringstream input("1\n 0\n");
+    input >> elem;
+    ASSERT_EQ(elem[0].condition, cpplab3v13::HIGH);
+    ASSERT_EQ(elem[1].condition, cpplab3v13::LOW);
+}
+
+TEST(IOoperator, output_operator_test){
+    cpplab3v13::element elem;
+    std::ostringstream output;
+    elem(0, 1);
+    elem[0].set_cond(1);
+    elem[1].set_cond(1);
+    output << elem;
+    ASSERT_EQ("info about all existing connections:\nconnection #1:\nCondition: HIGH; type: INPUT; connected to elements: 2\n\nconnection #2:\nCondition: HIGH; type: OUTPUT; connected to elements: 1\n\n",
+            output.str());
 }
 
 

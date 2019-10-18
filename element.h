@@ -4,7 +4,6 @@
 
 #ifndef CPPLAB3_ELEMENT_H
 #define CPPLAB3_ELEMENT_H
-#pragma once
 
 #include <iostream>
 #include <csignal>
@@ -38,7 +37,7 @@ namespace cpplab3v13{
         connection cs[connections_max];
     public:
         explicit element(int in = 1, int out = 1);  // constructors
-        explicit element(connection);
+        explicit element(connection);     // used in overloaded +=
         element(connection* arr, int sum);
 
         element& disconnect_conn(int which);  // modificators
