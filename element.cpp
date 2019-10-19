@@ -19,8 +19,9 @@ namespace cpplab3v13{
     const int NMsgs = sizeof(messages)/sizeof(messages[0]);
 
     element::element(int in, int out) {
-        this->conns = 0;
-        for(int i = 0; i < (in + out) && i < connections_max; ++i){
+        conns = 0;
+        cs = nullptr;
+        for(int i = 0; i < (in + out); ++i){
             connection con;
             con.type = i < in ? IN : OUT;
             add_conn(con);
@@ -28,7 +29,8 @@ namespace cpplab3v13{
     }
 
     element::element(connection *arr, int sum) {
-        this->conns = 0;
+        conns = 0;
+        cs = nullptr;
         for(int i = 0; i < sum; ++i){
             if(arr[i].type == IM) arr[i].type = IN;
             for(int j = 0; j < 3; ++j){
@@ -39,25 +41,42 @@ namespace cpplab3v13{
     }
 
     element::element(const connection cn) {
-        conns = 1;
-        cs[0] = cn;
+        conns = 0;
+        cs = nullptr;
+        add_conn(cn);
     }
 
-    element &element::add_conn(const connection newcomer) {
-        if(this->conns >= connections_max)
-            throw std::runtime_error("Too many connections to add more!");
-        for(int i = 0; i < connections_max; ++i){
-            if(cs[i].type == IM){
-                cs[i] = newcomer;
-                this->conns++;
-                break;
-            }
+    element::element(const element & elem) : conns(elem.conns){
+        cs = new connection[conns];
+        for(int i = 0; i < conns; ++i){
+            cs[i] = elem.cs[i];
         }
+    }
+
+    element::element(element && elem) noexcept : conns(elem.conns), cs(elem.cs){
+        elem.cs = nullptr;
+    }
+
+
+    element &element::add_conn(const connection newcomer) {
+        ++conns;
+        if(cs == nullptr){
+            cs = new connection[1];
+            cs[0] = newcomer;
+            return *this;
+        }
+        connection *old = cs;
+        cs = new connection[conns];
+        for(int i = 0; i < (conns - 1); ++i){
+            cs[i] = old[i];
+        }
+        delete [] old;
+        cs[conns - 1] = newcomer;
         return *this;
     }
 
     element &element::disconnect_conn(const int which) {
-        if(which < 0 || which >= connections_max)
+        if(which < 0 || which >= conns)
             throw std::runtime_error("invalid connection index");
         if(cs[which].type == IM)
             throw std::runtime_error("there is no such connection");
@@ -81,7 +100,7 @@ namespace cpplab3v13{
         } else{
             for(int i = 0; i < 3; ++i){ //OUT-type has 3 available sockets
                 if(cs[which].sockets[i] != -1){   // find a connected socket
-                    for(int j = 0; j < connections_max; ++j){ //find where to
+                    for(int j = 0; j < conns; ++j){ //find where to
                         cs[cs[which].sockets[i]].sockets[0] = -1; //OUT can only be connected to IN
                         cs[cs[which].sockets[i]].condition = X;//and IN has only one available socket
                     }
@@ -96,7 +115,7 @@ namespace cpplab3v13{
     }
 
     element &element::delete_conn(const int which) {
-        if(which < 0 || which >= connections_max)
+        if(which < 0 || which >= conns)
             throw std::runtime_error("invalid connection index");
         if(cs[which].type == IM)
             throw std::runtime_error("there is no such connection");
@@ -123,7 +142,7 @@ namespace cpplab3v13{
     }
 
     connection& element::operator[](const int index) {
-        if(index < 0 || index >= connections_max)
+        if(index < 0 || index >= conns)
             throw std::runtime_error("invalid connection index");
         if(cs[index].type == IM)
             throw std::runtime_error("there is no such connection");
@@ -131,7 +150,7 @@ namespace cpplab3v13{
     }
 
     connection element::operator[](const int index) const { //const connection
-        if(index < 0 || index >= connections_max)
+        if(index < 0 || index >= conns)
             throw std::runtime_error("invalid connection index");
         if(cs[index].type == IM)
             throw std::runtime_error("there is no such connection");
@@ -139,11 +158,11 @@ namespace cpplab3v13{
     }
 
     element &element::operator()(int which, int whereto) {
-        if(which < 0 || which >= connections_max)
+        if(which < 0 || which >= conns)
             throw std::runtime_error("invalid connection index");
         if(cs[which].type == IM)
             throw std::runtime_error("there is no such connection");
-        if(whereto < 0 || whereto >= connections_max)
+        if(whereto < 0 || whereto >= conns)
             throw std::runtime_error("invalid connection index");
         if(cs[whereto].type == IM)
             throw std::runtime_error("there is no such connection");
@@ -180,14 +199,14 @@ namespace cpplab3v13{
     }
 
     element &element::operator+=(const element& elem) {
-        for(int  i = 0, j = 0; i < connections_max; ++i){
-            if(cs[i].type == IM){
-                if(j >= elem.conns) break;   // end of conns in elem
-                cs[i] = elem.cs[j];
-                ++conns;
-                ++j;
-            }
+        int tmp = conns;
+        conns += elem.conns;
+        connection *old = cs;
+        cs = new connection[conns];
+        for(int i = 0; i < conns; ++i){
+            cs[i] = i < tmp ? old[i] : elem.cs[i];
         }
+        delete [] old;
         return *this;
     }
 
@@ -268,6 +287,24 @@ namespace cpplab3v13{
             }
         }
         return s;
+    }
+
+    element &element::operator =(const element& elem) {
+        if(this != &elem){
+            conns = elem.conns;
+            delete [] cs;
+            cs = new connection[conns];
+            for(int i = 0; i < conns; ++i){
+                cs[i] = elem.cs[i];
+            }
+        }
+        return *this;
+    }
+
+    element &element::operator =(element&& elem) noexcept {
+        conns = elem.conns;
+        cs = elem.cs;
+        return *this;
     }
 
 

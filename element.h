@@ -32,13 +32,14 @@ namespace cpplab3v13{
 
     class element{
     private:
-        static const int connections_max = 10;
         int conns;
-        connection cs[connections_max];
+        connection *cs;
     public:
         explicit element(int in = 1, int out = 1);  // constructors
         explicit element(connection);     // used in overloaded +=
         element(connection* arr, int sum);
+        element(const element&); // copying
+        element(element&&) noexcept;  // moving
 
         element& disconnect_conn(int which);  // modificators
         element& add_conn(connection newcomer);
@@ -48,9 +49,13 @@ namespace cpplab3v13{
         connection& operator [](int);    // set state
         connection operator [](int) const;   // get state
         element& operator +=(const element&);  // for adding a connection
+        element& operator =(const element&); // overloaded =
+        element& operator =(element&&) noexcept;    // moving =
 
         friend std::istream& operator >> (std::istream&, element&);  // total reorg of stats
         friend std::ostream& operator << (std::ostream&, const element&);  // print all
+
+        ~element(){ delete [] cs; }  // destructor
     };
 
     template <class T>
