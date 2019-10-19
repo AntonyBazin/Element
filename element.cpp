@@ -204,7 +204,7 @@ namespace cpplab3v13{
         connection *old = cs;
         cs = new connection[conns];
         for(int i = 0; i < conns; ++i){
-            cs[i] = i < tmp ? old[i] : elem.cs[i];
+            cs[i] = i < tmp ? old[i] : elem.cs[i - tmp];
         }
         delete [] old;
         return *this;
