@@ -303,7 +303,9 @@ namespace cpplab3v13{
 
     element &element::operator =(element&& elem) noexcept {
         conns = elem.conns;
+        connection *h = cs;
         cs = elem.cs;
+        elem.cs = h;
         return *this;
     }
 
