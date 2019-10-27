@@ -1,23 +1,45 @@
 #include "element.h"
+#include "app.h"
 
 using namespace cpplab3v13;
 
 int main() {
-    int rc;
-    //auto *ptr = new connection[7];
-    int (*function_ptr[])(element&) = {nullptr, d_add_conn, d_del_conn,
-                                       d_show_all, d_disconnect_conn,
-                                       d_connect_conn,d_change_all_states,
-                                       d_print_conn_state, d_set_conn_state};
+    int rc, c1, c2;
+    Sheffer_stroke stroke;
+    while(true){
+        std::cout << "Input 2 conditions for the Sheffer stroke function:"
+        << std::endl;
+        do{
+            rc = input_number(c1, std::cin);
+            if(rc == 1) break;
+            if(!rc) {
+                std::cout << "That's all. Bye!" << std::endl;
+                return 0;
+            }
+            std::cout << "incorrect input, please, try again:";
+        }while(rc < 0);
 
+        do{
+            rc = input_number(c2, std::cin);
+            if(rc == 1) break;
+            if(!rc) {
+                std::cout << "That's all. Bye!" << std::endl;
+                return 0;
+            }
+            std::cout << "incorrect input, please, try again:";
+        }while(rc < 0);
 
-    /*for(int i = 0; i < 5; ++i){
-        ptr[i].type = i < 2 ? IN : OUT;
-    }*/
-    element elem;
-    while((rc = dialog())){
-        if(!function_ptr[rc](elem)) break;
+        switch(stroke(static_cast<conditions>(c1), static_cast<conditions>(c2))){
+            case 0:
+                std::cout << "LOW; ";
+                break;
+            case 1:
+                std::cout << "HIGH; ";
+                break;
+            default:
+                std::cout << "NOT DEFINED; ";
+                break;
+        }
     }
-    //delete [] ptr;
     return 0;
 }
