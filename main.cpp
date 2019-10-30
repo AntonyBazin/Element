@@ -6,6 +6,9 @@ using namespace cpplab3v13;
 int main() {
     int rc, c1, c2;
     Sheffer_stroke stroke;
+    std::cout << "default stroke output:" << std::endl
+    << stroke.output() << std::endl;
+
     while(true){
         std::cout << "Input 2 conditions for the Sheffer stroke function:"
         << std::endl;

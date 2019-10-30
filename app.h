@@ -11,12 +11,11 @@ namespace cpplab3v13{
 
     class Sheffer_stroke{
     private:
-        conditions c1, c2;
         element elems[4];
         conditions answer;
     public:
-        Sheffer_stroke(conditions c1 = X, conditions c2 = X);
-        conditions output(conditions c1, conditions c2){ return answer; }
+        Sheffer_stroke();
+        conditions output(){ return answer; }
         conditions operator ()(conditions c1, conditions c2);
     };
 

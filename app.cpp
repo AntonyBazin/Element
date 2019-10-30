@@ -7,7 +7,7 @@
 #include "app.h"
 
 namespace cpplab3v13{
-    Sheffer_stroke::Sheffer_stroke(conditions c1, conditions c2) {
+    Sheffer_stroke::Sheffer_stroke() {
         connection addition;
         std::istringstream set1("0\n 1\n 0\n");
         std::istringstream set2("0\n 1\n 1\n");
@@ -23,15 +23,14 @@ namespace cpplab3v13{
         set2 >> elems[1];
         set3 >> elems[2];
         set4 >> elems[3];
-        this->c1 = c1, this->c2 = c2;
         answer = X;
     }
 
 
-    conditions Sheffer_stroke::operator()(conditions c1, conditions c2) {
+    conditions Sheffer_stroke::operator()(conditions t_c1, conditions t_c2) {
         answer = X;
         for(int i = 0; i < 4; ++i){
-            if(elems[i][0].condition == c1 && elems[i][2].condition == c2)
+            if(elems[i][0].condition == t_c1 && elems[i][2].condition == t_c2)
                 answer = elems[i][1].condition;
         }
         return answer;
