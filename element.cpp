@@ -261,12 +261,6 @@ namespace cpplab3v13{
             }
             if(lonely) continue;
 
-            std::cout << "Please, enter the condition(1 for high signal level, "
-                      << "0 for low signal level, anything else for X)"
-                      << std::endl << "of connection #" << (i + 1)
-                      << " of type " << (elem.cs[i].type == IN ? "INPUT:" : "OUTPUT:")
-                      << std::endl;
-
             do{
                 rc = input_number(c, s);
                 if(rc == 1) break;
