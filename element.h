@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <csignal>
+#include <sstream>
 
 namespace cpplab3v13{
 
@@ -83,6 +84,19 @@ namespace cpplab3v13{
         d_change_all_states(element&),
         d_print_conn_state(element&),
         d_set_conn_state(element&);
+
+    class Sheffer_stroke{
+    private:
+        element elems[4];
+        conditions answer;
+    public:
+        Sheffer_stroke();
+        conditions output(){ return answer; }
+        conditions operator ()(conditions c1, conditions c2);
+    };
+
+    conditions f(conditions t_x, conditions t_y, conditions t_z);
+
 }
 
 #endif //CPPLAB3_ELEMENT_H
