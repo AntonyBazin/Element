@@ -7,8 +7,8 @@ int main() {
         auto x = static_cast<conditions>(i > 3 ? 1 : 0),
             y = static_cast<conditions>(i / 2 % 2),
             z = static_cast<conditions>(i % 2);
-        std::cout << "#" << i << " {" << x << "; " << y << "; " << z << "}:"
-        << std::endl << cpplab3v13::f(x, y, z) << std::endl;
+        std::cout << "#" << i << " {" << x << "; " << y << "; " << z << "}: "
+        << cpplab3v13::f(x, y, z) << std::endl;
     }
     return 0;
 }
